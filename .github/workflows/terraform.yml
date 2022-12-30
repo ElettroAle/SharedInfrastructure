@@ -55,8 +55,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
-      displayName: 'Terraform : install'
+    - name: 'Terraform : install'
+      uses: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
       ${{ if not(eq(parameters['version'], '')) }}:
         inputs:
           terraformVersion: '${{ parameters.version }}'
