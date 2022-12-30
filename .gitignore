@@ -1,2 +1,3 @@
 Infrastructure/local/dev.tfvars
 Infrastructure/.terraform/*
+Infrastructure/.terraform.lock.hcl
