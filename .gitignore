@@ -1,0 +1,2 @@
+Infrastructure/local/dev.tfvars
+Infrastructure/.terraform/*
