@@ -19,7 +19,7 @@ provider "azurerm" {
     resource_group_name   = "rg-managing"
     storage_account_name  = "samanaging"
     container_name        = "tfstate"
-    key                   = "${var.cluster_name}.tfstate"
+    key                   = "${var.cluster_name}.${var.environment_shortName}tfstate"
     subscription_id       = var.subscription_id
     tenant_id             = var.tenant_id
     client_id             = var.client_id
