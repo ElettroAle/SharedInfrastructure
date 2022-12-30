@@ -56,7 +56,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: 'Terraform : install'
-      uses: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      uses: hashicorp/setup-terraform@v1
       ${{ if not(eq(parameters['version'], '')) }}:
         inputs:
           terraformVersion: '${{ parameters.version }}'
