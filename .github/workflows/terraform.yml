@@ -10,10 +10,6 @@ permissions:
   contents: read
 
 #0.14.10
-parameters:
-- name: version
-  type: string
-  default: ''
 # - name: serviceConnection
 #   type: string
 # - name: resourceGroupName
@@ -56,11 +52,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: 'Terraform : install'
+    - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-      ${{ if not(eq(parameters['version'], '')) }}:
-        inputs:
-          terraformVersion: '${{ parameters.version }}'
+      with:
+        # terraform_version: 0.13.0:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt -check
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+    
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
 
     # - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
     #   displayName: 'Terraform : init'
