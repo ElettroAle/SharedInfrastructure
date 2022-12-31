@@ -1,5 +1,3 @@
-# We strongly recommend using the required_providers block to set the
-# Azure Provider source and version being used
 terraform {
   required_providers {
     azurerm = {
@@ -14,14 +12,8 @@ terraform {
       name = "shared-infrastructure"
     }
   }
-  # backend "azurerm" {
-  #   resource_group_name   = "rg-managing"
-  #   storage_account_name  = "samanaging"
-  #   container_name        = "terraform"
-  # }
 }
 
-# Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {} 
 }
