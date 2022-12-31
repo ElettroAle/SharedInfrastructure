@@ -14,7 +14,7 @@ env:
 jobs:
   terraform:
     name: "Terraform"
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       environment_name: production
     defaults:
@@ -83,4 +83,4 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false -var-file="./variables/${{ env.environment_name }}.tfvars
+        run: terraform apply -auto-approve -input=false -var-file="./variables/${{ env.environment_name }}.tfvars"
