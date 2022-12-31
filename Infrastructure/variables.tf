@@ -3,7 +3,7 @@ variable "cluster_name" {
   description = "The name of the aks cluster"
   default     = "cluster"
 }
-variable "environment_shortName" {
+variable "environment_short_name" {
   type        = string
   description = "The short name of the solution environment"
 }
