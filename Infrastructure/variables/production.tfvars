@@ -1,1 +1,1 @@
-environment_shortName = "prod"
+environment_short_name = "prod"
