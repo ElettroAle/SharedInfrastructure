@@ -7,21 +7,23 @@ terraform {
       version = ">=3.0.0"
     }
   }
-  backend "azurerm" {
-    resource_group_name   = "rg-managing"
-    storage_account_name  = "samanaging"
-    container_name        = "terraform"
+  cloud {
+    organization = "ElettroAle"
+
+    workspaces {
+      name = "shared-infrastructure"
+    }
   }
+  # backend "azurerm" {
+  #   resource_group_name   = "rg-managing"
+  #   storage_account_name  = "samanaging"
+  #   container_name        = "terraform"
+  # }
 }
 
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
-  features {}
-
-  use_msi = var.IS_LOCAL ? false : true
-  subscription_id       = var.subscription_id
-  tenant_id             = var.tenant_id
-  client_id             = var.UID_CLIENT_ID
+  features {} 
 }
 
 resource "azurerm_resource_group" "rg" {

@@ -5,15 +5,18 @@ on:
     branches:
       - main
   pull_request:
+    branches:    
+      - main
 
 env:
   tf_actions_working_dir: ./Infrastructure/
-  TF_LOG: DEBUG
 
 jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
+    env:
+      environment_name: production
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
@@ -42,7 +45,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
+        run: terraform plan -no-color -input=false -var-file="variables/${{ env.environment_name }}.tfvars"
         continue-on-error: true
 
       - uses: actions/github-script@v6
