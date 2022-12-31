@@ -8,6 +8,7 @@ on:
 
 env:
   tf_actions_working_dir: ./Infrastructure/
+  TF_LOG: DEBUG
 
 jobs:
   terraform:
