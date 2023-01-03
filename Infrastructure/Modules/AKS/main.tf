@@ -3,7 +3,7 @@ locals {
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                = "cr" + replace(local.name_suffix, "-", "")
+  name                = "cr${replace(local.name_suffix, "-", "")}"
   resource_group_name = var.resource_group_name
   location            = var.location
   sku                 = "Basic"
