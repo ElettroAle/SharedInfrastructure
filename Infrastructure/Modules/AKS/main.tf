@@ -36,8 +36,3 @@ resource "azurerm_role_assignment" "rbac" {
   skip_service_principal_aad_check = true
   depends_on                       = [ azurerm_kubernetes_cluster.aks ]
 }
-
-# Output the AKS cluster configuration
-output "kube_config" {
-  value = azurerm_kubernetes_cluster.aks.kube_config_raw
-}
