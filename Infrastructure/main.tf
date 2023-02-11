@@ -32,3 +32,20 @@ module "cluster" {
   location                        = azurerm_resource_group.rg.location
   tags                            = var.tags 
 }
+
+resource "azurerm_dns_zone" "zone" {
+  name                = "elettroale.com"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_dns_a_record" "a_record" {
+  name = "elettroale.com"
+  records = [
+    module.cluster.ip
+  ]
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 3600
+  zone_name           = azurerm_dns_zone.zone.name
+
+  tags = var.tags
+}
