@@ -4,4 +4,5 @@
 
 output "ip" {
     value = azurerm_kubernetes_cluster.aks
+    sensitive = true
 }

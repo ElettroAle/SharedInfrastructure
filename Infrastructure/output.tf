@@ -7,4 +7,5 @@ output "resource_group_name" {
 
 output "ip" {
     value = module.cluster.ip
+    sensitive = true
 }
