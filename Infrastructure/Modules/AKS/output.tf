@@ -3,5 +3,5 @@
 # }
 
 output "ip" {
-    value = azurerm_kubernetes_cluster.aks.network_profile.0
+    value = azurerm_kubernetes_cluster.aks
 }
