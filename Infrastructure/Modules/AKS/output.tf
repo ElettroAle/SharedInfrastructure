@@ -3,5 +3,5 @@
 # }
 
 output "ip" {
-    value = azurerm_kubernetes_cluster.aks.network_profile.0.node_public_ip_tags
+    value = azurerm_kubernetes_cluster.aks.network_profile.0
 }
