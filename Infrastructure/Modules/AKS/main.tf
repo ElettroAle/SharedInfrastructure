@@ -36,8 +36,3 @@ resource "azurerm_role_assignment" "rbac" {
   skip_service_principal_aad_check = true
   depends_on                       = [ azurerm_kubernetes_cluster.aks ]
 }
-
-data "azurerm_public_ip" "ip" {
-  name                = reverse(split("/", tolist(azurerm_kubernetes_cluster.aks.network_profile.0.load_balancer_profile.0.effective_outbound_ips)[0]))[0]
-  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
-}
