@@ -3,6 +3,6 @@
 # }
 
 output "ip" {
-    value = azurerm_kubernetes_cluster.aks
-    sensitive = true
+    value = azurerm_public_ip.lb-public-ip
+    sensitive = false
 }
