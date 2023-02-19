@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "lb-outbound-ip" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Dynamic"
   ip_version          = "IPv4"
-  sku                 = "Basic"
+  sku                 = "Standard"
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
