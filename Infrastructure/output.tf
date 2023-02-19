@@ -5,7 +5,7 @@ output "resource_group_name" {
   value = azurerm_resource_group.rg.name
 }
 
-output "ip" {
+output "cluster_ip" {
     value = module.cluster.ip
     sensitive = false
 }
