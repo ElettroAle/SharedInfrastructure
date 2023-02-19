@@ -41,8 +41,7 @@ resource "azurerm_dns_zone" "zone" {
 resource "azurerm_dns_a_record" "a_record" {
   name = "elettroale.com"
   records = [
-    "20.73.229.161"
-    # module.cluster.ip
+    module.cluster.ip
   ]
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 3600
