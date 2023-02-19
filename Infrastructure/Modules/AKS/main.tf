@@ -13,7 +13,7 @@ resource "azurerm_public_ip" "lb-outbound-ip" {
   name                = "pip-${local.name_suffix}-outbound"
   location            = var.location
   resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   ip_version          = "IPv4"
   sku                 = "Standard"
 }
