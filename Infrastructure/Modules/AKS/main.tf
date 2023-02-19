@@ -1,5 +1,5 @@
 locals {
-  name_suffix      = "${var.cluster_name}-${var.environment_short_name}"
+  name_suffix             = "${var.cluster_name}-${var.environment_short_name}"
 }
 
 resource "azurerm_container_registry" "acr" {
@@ -9,21 +9,12 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Basic"
 }
 
-resource "azurerm_public_ip" "lb-outbound-ip" {
-  name                = "pip-${local.name_suffix}-outbound"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Static"
-  ip_version          = "IPv4"
-  sku                 = "Standard"
-}
-
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-${local.name_suffix}"
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = local.name_suffix
-  depends_on          = [ azurerm_container_registry.acr, azurerm_public_ip.lb-outbound-ip ]
+  depends_on          = [ azurerm_container_registry.acr ]
 
   default_node_pool {
     name              = "default"
@@ -34,15 +25,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   identity {
     type              = "SystemAssigned"
-  }
-
-  network_profile {
-    network_plugin    = "kubenet"
-    load_balancer_sku = "standard"
-    load_balancer_profile {
-      outbound_ip_address_ids = [ "${azurerm_public_ip.lb-outbound-ip.id}" ]
-
-    }
   }
 }
 
