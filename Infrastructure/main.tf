@@ -4,6 +4,18 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">=3.0.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.3"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.1.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
   cloud {
     organization = "ElettroAle"
@@ -33,19 +45,39 @@ module "cluster" {
   tags                            = var.tags 
 }
 
+provider "kubernetes" {
+  host                   = module.cluster.kube_config.host
+  client_certificate     = base64decode(module.cluster.kube_config.client_certificate)
+  client_key             = base64decode(module.cluster.kube_config.client_key)
+  cluster_ca_certificate = base64decode(module.cluster.kube_config.cluster_ca_certificate) 
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = module.cluster.kube_config.host
+    client_certificate     = base64decode(module.cluster.kube_config.client_certificate)
+    client_key             = base64decode(module.cluster.kube_config.client_key)
+    cluster_ca_certificate = base64decode(module.cluster.kube_config.cluster_ca_certificate)
+  }
+}
+
+module "cluster_services" {
+  source                          = "./Modules/k8s_services" 
+  ip_address                      = module.cluster.ip
+  depends_on                      = [ module.cluster] 
+}
+
 resource "azurerm_dns_zone" "zone" {
-  name                = "elettroale.com"
-  resource_group_name = azurerm_resource_group.rg.name
+  name                            = "elettroale.com"
+  resource_group_name             = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_dns_a_record" "a_record" {
-  name = "elettroale.com"
-  records = [
-    module.cluster.ip
-  ]
-  resource_group_name = azurerm_resource_group.rg.name
-  ttl                 = 3600
-  zone_name           = azurerm_dns_zone.zone.name
-
+  name                            = "elettroale.com"
+  records                         = [ module.cluster.ip ]
+  resource_group_name             = azurerm_resource_group.rg.name
+  ttl                             = 3600
+  zone_name                       = azurerm_dns_zone.zone.name
   tags = var.tags
+  depends_on                      = [ module.cluster] 
 }
