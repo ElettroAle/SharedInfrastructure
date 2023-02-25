@@ -111,22 +111,17 @@ resource "kubernetes_labels" "namespace_label" {
   }
 }
 
-data "http" "CRDs_manifest_file" {
-  url = "https://github.com/cert-manager/cert-manager/releases/download/${local.CRDs_manifest_version}/cert-manager.crds.yaml"
+resource "helm_release" "cert_manager" {
+  depends_on       = [ azurerm_kubernetes_cluster.aks ]
+  name             = "${azurerm_kubernetes_cluster.aks.name}-cert-manager"
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  namespace        = local.ingress_namespace
+  version          = local.cert_manager_chart_version 
+  create_namespace = true
+  set {
+    name = "installCRDs"
+    value = "true"
+  }
 }
-
-resource "kubectl_manifest" "CRDs_manifest" {
-  yaml_body = data.http.CRDs_manifest_file.response_body
-}
-
-# resource "helm_release" "cert_manager" {
-#   depends_on       = [ azurerm_kubernetes_cluster.aks ]
-#   name             = "${azurerm_kubernetes_cluster.aks.name}-cert-manager"
-#   repository       = "https://charts.jetstack.io"
-#   chart            = "cert-manager"
-#   namespace        = local.ingress_namespace
-#   version          = local.cert_manager_chart_version 
-#   create_namespace = true
-# }
-
 
