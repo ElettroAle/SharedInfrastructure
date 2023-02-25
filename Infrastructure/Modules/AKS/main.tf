@@ -1,5 +1,29 @@
+terraform {
+  required_version = ">= 0.13"
+
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.3"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.1.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+  }
+}
+
 locals {
-  name_suffix             = "${var.cluster_name}-${var.environment_short_name}"
+  name_suffix                 = "${var.cluster_name}-${var.environment_short_name}"
+  ingress_namespace           = "shared-ingress"
+
+  nginx_ingress_chart_version = "4.4.2"
+  CRDs_manifest_version       = "v1.11.0"
+  cert_manager_chart_version  = "v1.8.0"
 }
 
 resource "azurerm_container_registry" "acr" {
@@ -67,12 +91,42 @@ resource "helm_release" "ingress" {
   name             = "${azurerm_kubernetes_cluster.aks.name}-nginx"
   repository       = "https://kubernetes.github.io/ingress-nginx/"
   chart            = "ingress-nginx"
-  namespace        = "ingress-ns"
-  version          = "4.4.2"
+  namespace        = local.ingress_namespace
+  version          = local.nginx_ingress_chart_version
   create_namespace = true
   set {
     name = "controller.service.loadBalancerIP"
     value = azurerm_public_ip.lb-public-ip.ip_address
   }
 }
+
+resource "kubernetes_labels" "namespace_label" {
+  api_version = "v1"
+  kind        = "Namespace"
+  metadata {
+    name = local.ingress_namespace
+  }
+  labels = {
+    "cert-manager.io/disable-validation" = "true"
+  }
+}
+
+data "http" "CRDs_manifest_file" {
+  url = "https://github.com/cert-manager/cert-manager/releases/download/${local.CRDs_manifest_version}/cert-manager.crds.yaml"
+}
+
+resource "kubectl_manifest" "CRDs_manifest" {
+  yaml_body = data.http.CRDs_manifest_file.response_body
+}
+
+# resource "helm_release" "cert_manager" {
+#   depends_on       = [ azurerm_kubernetes_cluster.aks ]
+#   name             = "${azurerm_kubernetes_cluster.aks.name}-cert-manager"
+#   repository       = "https://charts.jetstack.io"
+#   chart            = "cert-manager"
+#   namespace        = local.ingress_namespace
+#   version          = local.cert_manager_chart_version 
+#   create_namespace = true
+# }
+
 

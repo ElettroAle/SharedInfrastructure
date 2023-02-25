@@ -4,14 +4,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">=3.0.0"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.0.3"
-    }
-    helm = {
-      source  = "hashicorp/helm"
-      version = ">= 2.1.0"
-    }
   }
   cloud {
     organization = "ElettroAle"
@@ -46,14 +38,14 @@ resource "azurerm_dns_zone" "zone" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-# resource "azurerm_dns_a_record" "a_record" {
-#   name = "elettroale.com"
-#   records = [
-#     module.cluster.ip
-#   ]
-#   resource_group_name = azurerm_resource_group.rg.name
-#   ttl                 = 3600
-#   zone_name           = azurerm_dns_zone.zone.name
+resource "azurerm_dns_a_record" "a_record" {
+  name = "elettroale.com"
+  records = [
+    module.cluster.ip
+  ]
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 3600
+  zone_name           = azurerm_dns_zone.zone.name
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
