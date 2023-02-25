@@ -116,7 +116,7 @@ resource "helm_release" "cert_manager" {
   name             = "${azurerm_kubernetes_cluster.aks.name}-cert-manager"
   repository       = "https://charts.jetstack.io"
   chart            = "cert-manager"
-  namespace        = "cert-manager"
+  namespace        = local.ingress_namespace
   version          = local.cert_manager_chart_version 
   create_namespace = true
   set {
