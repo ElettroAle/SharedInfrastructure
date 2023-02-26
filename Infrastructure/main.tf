@@ -52,6 +52,7 @@ provider "helm" {
 module "cluster_services" {
   source                          = "./Modules/k8s_services" 
   ip_address                      = module.cluster.ip
+  certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
   depends_on                      = [ module.cluster] 
 }
 
