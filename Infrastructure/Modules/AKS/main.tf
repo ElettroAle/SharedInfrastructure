@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=3.0.0"
+    }
+  }
+}
+
 locals {
   name_suffix                 = "${var.cluster_name}-${var.environment_short_name}"
 }
