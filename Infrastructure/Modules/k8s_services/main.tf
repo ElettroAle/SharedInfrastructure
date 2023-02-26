@@ -1,20 +1,12 @@
 terraform {
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">=3.0.0"
-    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.0.3"
+      version = ">= 2.5.0"
     }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 2.1.0"
-    }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
     }
   }
 }
@@ -63,28 +55,37 @@ resource "helm_release" "cert_manager" {
   }
 }
 
-resource "kubectl_manifest" "letsencrypt" {
-  yaml_body = <<YAML
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt
-spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: ${var.certificate_requester_email}
-    privateKeySecretRef:
-      name: letsencrypt
-    solvers:
-    - http01:
-        ingress:
-          class: nginx
-          podTemplate:
-            spec:
-              nodeSelector:
-                "kubernetes.io/os": linux
-YAML
-  sensitive_fields = [
-    "spec.acme.email"
-  ]
+resource "kubernetes_manifest" "clusterissuer_letsencrypt" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind" = "ClusterIssuer"
+    "metadata" = {
+      "name" = "letsencrypt"
+    }
+    "spec" = {
+      "acme" = {
+        "email" = "${var.certificate_requester_email}"
+        "privateKeySecretRef" = {
+          "name" = "letsencrypt"
+        }
+        "server" = "https://acme-v02.api.letsencrypt.org/directory"
+        "solvers" = [
+          {
+            "http01" = {
+              "ingress" = {
+                "class" = "nginx"
+                "podTemplate" = {
+                  "spec" = {
+                    "nodeSelector" = {
+                      "kubernetes.io/os" = "linux"
+                    }
+                  }
+                }
+              }
+            }
+          },
+        ]
+      }
+    }
+  }
 }
