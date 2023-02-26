@@ -17,3 +17,8 @@ variable "tags" {
   description = "The resource tags"
   default     = {}
 }
+variable "CERTIFICATE_REQUESTER_EMAIL" {
+  type = string
+  description = "A valid email address of the organization for the certificate creation"
+  sensitive = true
+}
