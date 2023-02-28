@@ -61,7 +61,7 @@ resource "azurerm_dns_a_record" "record" {
   ttl                             = 3600
   zone_name                       = azurerm_dns_zone.zone.name
   tags = var.tags
-  depends_on                      = [ module.cluster] 
+  depends_on                      = [ module.cluster, azurerm_dns_zone.zone ] 
 }
 
 module "cluster_services" {
