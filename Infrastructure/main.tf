@@ -49,19 +49,12 @@ provider "helm" {
   }
 }
 
-module "cluster_services" {
-  source                          = "./Modules/k8s_services" 
-  ip_address                      = module.cluster.ip
-  certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
-  depends_on                      = [ module.cluster] 
-}
-
 resource "azurerm_dns_zone" "zone" {
   name                            = "elettroale.com"
   resource_group_name             = azurerm_resource_group.rg.name
 }
 
-resource "azurerm_dns_a_record" "a_record" {
+resource "azurerm_dns_a_record" "record" {
   name                            = "elettroale.com"
   records                         = [ module.cluster.ip ]
   resource_group_name             = azurerm_resource_group.rg.name
@@ -70,3 +63,12 @@ resource "azurerm_dns_a_record" "a_record" {
   tags = var.tags
   depends_on                      = [ module.cluster] 
 }
+
+module "cluster_services" {
+  source                          = "./Modules/k8s_services" 
+  ip_address                      = module.cluster.ip
+  dns_label                       = azurerm_dns_a_record.record.name
+  certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
+  depends_on                      = [ module.cluster, azurerm_dns_a_record.record ] 
+}
+
