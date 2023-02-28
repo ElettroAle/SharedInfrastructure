@@ -29,6 +29,10 @@ resource "helm_release" "ingress" {
     name = "controller.service.loadBalancerIP"
     value = var.ip_address
   }
+  set {
+    name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name"
+    value = var.dns_label
+  }
 }
 
 resource "kubernetes_labels" "namespace_label" {
