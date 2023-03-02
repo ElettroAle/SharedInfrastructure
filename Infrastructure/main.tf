@@ -67,7 +67,7 @@ resource "azurerm_dns_a_record" "record" {
 module "cluster_services" {
   source                          = "./Modules/k8s_services" 
   ip_address                      = module.cluster.ip
-  dns_label                       = azurerm_dns_a_record.record.name
+  dns_label                       = tolist(azurerm_dns_zone.zone.name_servers)[0]
   certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
   depends_on                      = [ module.cluster, azurerm_dns_a_record.record ] 
 }
