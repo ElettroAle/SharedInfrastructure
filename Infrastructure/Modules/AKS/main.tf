@@ -40,7 +40,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 resource "azurerm_public_ip" "lb-public-ip" {
   name                = "pip-${local.name_suffix}"
   location            = var.location
-  resource_group_name = "MC_${var.resource_group_name}_aks-${local.name_suffix}_${var.location}"
+  resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   ip_version          = "IPv4"
   sku                 = "Standard"

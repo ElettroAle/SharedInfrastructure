@@ -57,8 +57,11 @@ provider "helm" {
 
 module "cluster_services" {
   source                          = "./Modules/k8s_services" 
-  ip_address                      = module.cluster.ip
-  dns_label_prefix                = var.dns_label_prefix
   certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
+  ingress_annotations             = {
+    "controller.service.loadBalancerIP" = module.cluster.ip
+    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name" = var.dns_label_prefix
+    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group" = azurerm_resource_group.rg.name
+  }
   depends_on                      = [ module.cluster ] 
 }
