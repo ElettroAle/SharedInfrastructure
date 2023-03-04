@@ -25,13 +25,10 @@ resource "helm_release" "ingress" {
   namespace        = local.ingress_namespace
   version          = local.nginx_ingress_chart_version
   create_namespace = true
+  for_each = var.ingress_annotations
   set {
-    name = "controller.service.loadBalancerIP"
-    value = var.ip_address
-  }
-  set {
-    name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name"
-    value = var.dns_label_prefix
+    name = each.key
+    value = each.value
   }
 }
 
