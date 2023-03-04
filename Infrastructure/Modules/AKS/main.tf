@@ -56,10 +56,14 @@ resource "azurerm_role_assignment" "rbac" {
   depends_on                       = [ azurerm_kubernetes_cluster.aks ]
 } 
 
+data "azurerm_resource_group" "rg" {
+  name = azurerm_kubernetes_cluster.aks.node_resource_group
+}
+
 resource "azurerm_role_assignment" "rbac2" {
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
   role_definition_name             = "Network Contributor"
-  scope                            = azurerm_resource_group.rg.id
+  scope                            = data.azurerm_resource_group.rg.id
   skip_service_principal_aad_check = true
-  depends_on                       = [ azurerm_kubernetes_cluster.aks, azurerm_resource_group.rg ]
+  depends_on                       = [ azurerm_kubernetes_cluster.aks ]
 } 
