@@ -57,7 +57,6 @@ module "cluster_services" {
   ingress_annotations             = {
     "controller.service.loadBalancerIP" = module.cluster.ip
     "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-dns-label-name" = var.dns_label_prefix
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group" = azurerm_resource_group.rg.name
   }
   depends_on                      = [ module.cluster ] 
 }

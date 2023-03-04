@@ -40,7 +40,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 resource "azurerm_public_ip" "lb-public-ip" {
   name                = "pip-${local.name_suffix}"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = "MC_${var.resource_group_name}_aks-${local.name_suffix}_${var.location}"
   allocation_method   = "Static"
   ip_version          = "IPv4"
   sku                 = "Standard"
@@ -54,16 +54,4 @@ resource "azurerm_role_assignment" "rbac" {
   scope                            = azurerm_container_registry.acr.id
   skip_service_principal_aad_check = true
   depends_on                       = [ azurerm_kubernetes_cluster.aks ]
-} 
-
-data "azurerm_resource_group" "rg" {
-  name = azurerm_kubernetes_cluster.aks.node_resource_group
 }
-
-resource "azurerm_role_assignment" "rbac2" {
-  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
-  role_definition_name             = "Network Contributor"
-  scope                            = data.azurerm_resource_group.rg.id
-  skip_service_principal_aad_check = true
-  depends_on                       = [ azurerm_kubernetes_cluster.aks ]
-} 
