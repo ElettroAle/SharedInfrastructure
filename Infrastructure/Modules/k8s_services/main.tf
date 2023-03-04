@@ -25,10 +25,14 @@ resource "helm_release" "ingress" {
   namespace        = local.ingress_namespace
   version          = local.nginx_ingress_chart_version
   create_namespace = true
-  for_each = var.ingress_annotations
-  set {
-    name = each.key
-    value = each.value
+  dynamic "set" {
+    iterator = var.annotations
+    for_each = each.value.set == null ? [] : each.value.set
+
+    content {
+      name  = item.value.name
+      value = item.value.value
+    }
   }
 }
 
