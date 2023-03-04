@@ -55,20 +55,10 @@ provider "helm" {
   }
 }
 
-module "dns" {
-  source                          = "./Modules/DNS"  
-  resource_group_name             = azurerm_resource_group.rg.name
-  domain_name                     = local.domain_name
-  ip_address                      = module.cluster.ip
-  tags                            = var.tags
-  depends_on                      = [ module.cluster ]
-}
-
 module "cluster_services" {
   source                          = "./Modules/k8s_services" 
   ip_address                      = module.cluster.ip
   dns_label_prefix                = var.dns_label_prefix
   certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
-  depends_on                      = [ module.cluster, module.dns ] 
+  depends_on                      = [ module.cluster ] 
 }
-
