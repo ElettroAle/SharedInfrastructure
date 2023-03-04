@@ -18,10 +18,6 @@ provider "azurerm" {
   features {} 
 }
 
-locals {
-  domain_name = "elettroale.com"
-}
-
 resource "azurerm_resource_group" "rg" {
   name     = "rg-${var.cluster_name}"
   location = var.location
