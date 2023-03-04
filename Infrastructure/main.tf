@@ -18,6 +18,10 @@ provider "azurerm" {
   features {} 
 }
 
+locals {
+  domain_name = "elettroale.com"
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = "rg-${var.cluster_name}"
   location = var.location
@@ -30,7 +34,9 @@ module "cluster" {
   environment_short_name          = var.environment_short_name
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
-  tags                            = var.tags 
+  dns_label_prefix                = var.dns_label_prefix
+  tags                            = var.tags
+  depends_on                      = [ azurerm_resource_group.rg ] 
 }
 
 provider "kubernetes" {
@@ -49,26 +55,20 @@ provider "helm" {
   }
 }
 
-resource "azurerm_dns_zone" "zone" {
-  name                            = "elettroale.com"
+module "dns" {
+  source                          = "./Modules/DNS"  
   resource_group_name             = azurerm_resource_group.rg.name
-}
-
-resource "azurerm_dns_a_record" "record" {
-  name                            = "elettroale.com"
-  records                         = [ module.cluster.ip ]
-  resource_group_name             = azurerm_resource_group.rg.name
-  ttl                             = 3600
-  zone_name                       = azurerm_dns_zone.zone.name
-  tags = var.tags
-  depends_on                      = [ module.cluster, azurerm_dns_zone.zone ] 
+  domain_name                     = local.domain_name
+  ip_address                      = module.cluster.ip
+  tags                            = var.tags
+  depends_on                      = [ module.cluster ]
 }
 
 module "cluster_services" {
   source                          = "./Modules/k8s_services" 
   ip_address                      = module.cluster.ip
-  dns_label                       = tolist(azurerm_dns_zone.zone.name_servers)[0]
+  dns_label_prefix                = var.dns_label_prefix
   certificate_requester_email     = var.CERTIFICATE_REQUESTER_EMAIL
-  depends_on                      = [ module.cluster, azurerm_dns_a_record.record ] 
+  depends_on                      = [ module.cluster, module.dns ] 
 }
 

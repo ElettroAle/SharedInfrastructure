@@ -44,6 +44,7 @@ resource "azurerm_public_ip" "lb-public-ip" {
   allocation_method   = "Static"
   ip_version          = "IPv4"
   sku                 = "Standard"
+  domain_name_label   = var.dns_label_prefix
   depends_on          = [ azurerm_kubernetes_cluster.aks ]
 }
 

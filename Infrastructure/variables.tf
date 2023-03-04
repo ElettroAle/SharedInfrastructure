@@ -12,13 +12,17 @@ variable "location" {
   default     = "West Europe"
   description = "Resources location"
 }
-variable "tags" {
-  type        = map(string)
-  description = "The resource tags"
-  default     = {}
-}
 variable "CERTIFICATE_REQUESTER_EMAIL" {
   type = string
   description = "A valid email address of the organization for the certificate creation"
   sensitive = true
+}
+variable "dns_label_prefix" {
+  type = string
+  description = "the public ip DNS label name prefix. Used for FQDN definition"
+}
+variable "tags" {
+  type        = map(string)
+  description = "The resource tags"
+  default     = {}
 }
