@@ -24,6 +24,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = var.resource_group_name
   dns_prefix          = local.name_suffix
   depends_on          = [ azurerm_container_registry.acr ]
+  sku_tier            = "Free"
 
   default_node_pool {
     name              = "default"
