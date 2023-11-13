@@ -6,7 +6,7 @@ terraform {
     }
   }
   cloud {
-    organization = "ElettroAle"
+    organization = "Peruginissrl"
 
     workspaces {
       name = "shared-infrastructure"
